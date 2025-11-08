@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import userModel from './userModel';
+import bcrypt from 'bcrypt';
 
 export async function createUser(
   req: Request,
@@ -26,10 +27,21 @@ export async function createUser(
       return next(error);
     }
   } catch (err) {
-    return next(createHttpError(500, 'Error while getting the error.'));
+    return next(createHttpError(500, 'Error while getting the user.'));
   }
 
   // Process
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await userModel.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+  } catch (err) {
+    return next(createHttpError(500, 'Error while creating the user.'));
+  }
+
   // Response
 
   res.json('user registered');
