@@ -1,1 +1,1 @@
-export { globalErrorHandler } from './globalErrorHandler';
+export * from './globalErrorHandler';

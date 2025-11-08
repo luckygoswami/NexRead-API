@@ -1,2 +1,2 @@
-export { config } from './config';
-export { connectDB } from './db';
+export * from './config';
+export * from './db';
