@@ -1,7 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
 import createHttpError from 'http-errors';
 import userModel from './userModel';
-import bcrypt from 'bcrypt';
+import { compare, hash } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
+import { config } from '@/config';
 
 export async function createUser(
   req: Request,
@@ -30,19 +32,55 @@ export async function createUser(
     return next(createHttpError(500, 'Error while getting the user.'));
   }
 
-  // Process
+  // User Creation
   try {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await userModel.create({
+    const hashedPassword = await hash(password, 10);
+
+    const newUser = await userModel.create({
       name,
       email,
       password: hashedPassword,
     });
+
+    const authToken = sign({ sub: newUser._id }, config.jwt_secret, {
+      expiresIn: '7d',
+    });
+
+    res.status(201).json(authToken);
   } catch (err) {
     return next(createHttpError(500, 'Error while creating the user.'));
   }
+}
 
-  // Response
+export async function loginUser(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { email, password } = req.body;
 
-  res.json('user registered');
+  // Input Validation
+  if (!email || !password)
+    return next(createHttpError(400, 'All fields are required.'));
+
+  try {
+    const user = await userModel.findOne({ email });
+
+    // DB Validation
+    if (!user)
+      return next(createHttpError(404, 'User not found with this email.'));
+
+    const isMatch = await compare(password, user.password);
+
+    if (!isMatch)
+      return next(createHttpError(400, 'Username or Password incorrect.'));
+
+    const authToken = sign({ sub: user._id }, config.jwt_secret, {
+      expiresIn: '7d',
+    });
+
+    res.json({ authToken });
+  } catch (err) {
+    return next(createHttpError(500, 'Error while signing in.'));
+  }
 }
