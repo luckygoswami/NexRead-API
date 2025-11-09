@@ -5,5 +5,6 @@ export async function createBook(
   res: Response,
   next: NextFunction
 ) {
+  console.log(req.files);
   res.json('route initialized.');
 }

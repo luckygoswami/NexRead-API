@@ -20,7 +20,7 @@ const bookSchema = new mongoose.Schema<Book>(
       type: String,
       required: true,
     },
-    converImage: {
+    coverImage: {
       type: String,
       required: true,
     },
