@@ -42,7 +42,7 @@ export async function createUser(
       password: hashedPassword,
     });
 
-    const authToken = sign({ sub: newUser._id }, config.jwt_secret, {
+    const authToken = sign({ sub: newUser._id }, config.jwtSecret, {
       expiresIn: '7d',
     });
 
@@ -75,7 +75,7 @@ export async function loginUser(
     if (!isMatch)
       return next(createHttpError(400, 'Username or Password incorrect.'));
 
-    const authToken = sign({ sub: user._id }, config.jwt_secret, {
+    const authToken = sign({ sub: user._id }, config.jwtSecret, {
       expiresIn: '7d',
     });
 
