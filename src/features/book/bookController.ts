@@ -5,6 +5,7 @@ import createHttpError from 'http-errors';
 import { promises } from 'node:fs';
 import bookModel from './bookModel';
 import { AuthRequest } from '@/middlewares';
+import { config } from '@/config';
 
 export async function createBook(
   req: Request,
@@ -17,16 +18,8 @@ export async function createBook(
     file: [file],
   } = req.files as { [fieldname: string]: Express.Multer.File[] };
 
-  const coverImagePath = path.resolve(
-    __dirname,
-    '../../../public/data/uploads',
-    coverImage.filename
-  );
-  const filePath = path.resolve(
-    __dirname,
-    '../../../public/data/uploads',
-    file.filename
-  );
+  const coverImagePath = `${config.uploadDir}/${coverImage.filename}`
+  const filePath = `${config.uploadDir}/${file.filename}`
 
   try {
     // Upload - Cover Image

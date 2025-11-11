@@ -1,4 +1,5 @@
 import { config as envConfig } from 'dotenv';
+import path from 'node:path';
 
 envConfig();
 
@@ -10,6 +11,7 @@ const _config = {
   cloudName: process.env.CLOUD_NAME as string,
   cloudApiKey: process.env.CLOUD_API_KEY as string,
   cloudApiSecret: process.env.CLOUD_API_SECRET as string,
+  uploadDir: path.resolve(process.cwd(), 'public/data/uploads'),
 };
 
 export const config = Object.freeze(_config);
