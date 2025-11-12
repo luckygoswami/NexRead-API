@@ -173,3 +173,38 @@ export async function listBooks(
     return next(createHttpError(500, 'Error while getting books.'));
   }
 }
+
+export async function deleteBook(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  const { bookId } = req.params;
+  const _req = req as AuthRequest;
+
+  try {
+    const book = await bookModel.findOne({ _id: bookId });
+
+    // Validate authorization
+    if (!book) return next(createHttpError(404, 'Book not found.'));
+    if (book.author.toString() != _req.userId)
+      return next(
+        createHttpError(403, 'You are not authorised to delete this book.')
+      );
+
+    // Delete book files from DB
+    await bookModel.deleteOne({ _id: bookId });
+
+    // Delete book files from cloudinary
+    const imageId = `book-covers/${
+      book.coverImage.split('/').at(-1)?.split('.')[0]
+    }`;
+    const pdfId = `book-pdfs/${book.file.split('/').at(-1)}`;
+    await cloudinary.uploader.destroy(imageId);
+    await cloudinary.uploader.destroy(pdfId, { resource_type: 'raw' });
+
+    res.status(204);
+  } catch (err) {
+    return next(createHttpError(500, 'Error while deleting a book.'));
+  }
+}
