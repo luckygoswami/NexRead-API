@@ -145,3 +145,17 @@ export async function updateBook(
     return next(createHttpError(500, 'Error while updating the Book.'));
   }
 }
+
+export async function getBook(req: Request, res: Response, next: NextFunction) {
+  const { bookId } = req.params;
+
+  try {
+    const book = await bookModel.find({ _id: bookId });
+
+    if (!book) return next(createHttpError(404, 'Book not found.'));
+
+    res.json(book);
+  } catch (err) {
+    return next(createHttpError(500, 'Error while getting a book.'));
+  }
+}
