@@ -159,3 +159,17 @@ export async function getBook(req: Request, res: Response, next: NextFunction) {
     return next(createHttpError(500, 'Error while getting a book.'));
   }
 }
+
+export async function listBooks(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const books = await bookModel.find();
+
+    res.json(books);
+  } catch (err) {
+    return next(createHttpError(500, 'Error while getting books.'));
+  }
+}
