@@ -150,7 +150,9 @@ export async function getBook(req: Request, res: Response, next: NextFunction) {
   const { bookId } = req.params;
 
   try {
-    const book = await bookModel.find({ _id: bookId });
+    const book = await bookModel
+      .find({ _id: bookId })
+      .populate('author', 'name');
 
     if (!book) return next(createHttpError(404, 'Book not found.'));
 
@@ -166,7 +168,7 @@ export async function listBooks(
   next: NextFunction
 ) {
   try {
-    const books = await bookModel.find();
+    const books = await bookModel.find().populate('author', 'name');
 
     res.json(books);
   } catch (err) {
