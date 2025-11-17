@@ -2,8 +2,10 @@ import express from 'express';
 import { globalErrorHandler } from '@/middlewares';
 import { userRouter } from '@/features/user';
 import { bookRouter } from '@/features/book';
+import cors from 'cors';
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
