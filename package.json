@@ -1,5 +1,5 @@
 {
-  "name": "nexread",
+  "name": "nexread-api",
   "version": "1.0.0",
   "description": "The api project for elib.",
   "main": "dist/server.js",

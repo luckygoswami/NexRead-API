@@ -167,8 +167,13 @@ export async function listBooks(
   res: Response,
   next: NextFunction
 ) {
+  const { title } = req.query;
+
   try {
-    const books = await bookModel.find().populate('author', 'name');
+    let query: Partial<Record<'title', any>> = {};
+    if (title) query.title = { $regex: title, $options: 'i' };
+
+    const books = await bookModel.find(query).populate('author', 'name');
 
     res.json(books);
   } catch (err) {
@@ -205,7 +210,7 @@ export async function deleteBook(
     await cloudinary.uploader.destroy(imageId);
     await cloudinary.uploader.destroy(pdfId, { resource_type: 'raw' });
 
-    res.status(204);
+    res.sendStatus(204);
   } catch (err) {
     return next(createHttpError(500, 'Error while deleting a book.'));
   }
