@@ -11,7 +11,7 @@ export async function createBook(
   res: Response,
   next: NextFunction
 ) {
-  const { title, description, genre } = req.body;
+  const { title, description, genre, author } = req.body;
   const {
     coverImage: [coverImage],
     file: [file],
@@ -44,7 +44,8 @@ export async function createBook(
     const newBook = await bookModel.create({
       title,
       description,
-      author: _req.userId,
+      author,
+      uploadedBy: _req.userId,
       genre,
       coverImage: coverImageUploadRes.url,
       file: fileUploadRes.url,
@@ -152,7 +153,7 @@ export async function getBook(req: Request, res: Response, next: NextFunction) {
   try {
     const book = await bookModel
       .find({ _id: bookId })
-      .populate('author', 'name');
+      .populate('uploadedBy', 'name');
 
     if (!book) return next(createHttpError(404, 'Book not found.'));
 
@@ -173,7 +174,7 @@ export async function listBooks(
     let query: Partial<Record<'title', any>> = {};
     if (title) query.title = { $regex: title, $options: 'i' };
 
-    const books = await bookModel.find(query).populate('author', 'name');
+    const books = await bookModel.find(query).populate('uploadedBy', 'name');
 
     res.json(books);
   } catch (err) {
