@@ -207,7 +207,7 @@ export async function deleteBook(
 
     // Validate authorization
     if (!book) return next(createHttpError(404, 'Book not found.'));
-    if (book.author.toString() != _req.userId)
+    if (book.uploadedBy.toString() != _req.userId)
       return next(
         createHttpError(403, 'You are not authorised to delete this book.')
       );
