@@ -5,6 +5,7 @@ import { promises } from 'node:fs';
 import bookModel from './bookModel';
 import { AuthRequest } from '@/middlewares';
 import { config } from '@/config';
+import { verify } from 'jsonwebtoken';
 
 export async function createBook(
   req: Request,
@@ -169,13 +170,24 @@ export async function listBooks(
   next: NextFunction
 ) {
   const { title } = req.query;
+  const authToken = req.headers.authorization?.split(' ')[1];
+  let userId;
 
   try {
     let query: Partial<Record<'title', any>> = {};
     if (title) query.title = { $regex: title, $options: 'i' };
 
-    const books = await bookModel.find(query).populate('uploadedBy', 'name');
+    if (authToken) {
+      userId = verify(authToken, config.jwtSecret).sub;
 
+      const books = await bookModel
+        .find({ ...query, uploadedBy: userId })
+        .populate('uploadedBy', 'name');
+
+      return res.json(books);
+    }
+
+    const books = await bookModel.find(query).populate('uploadedBy', 'name');
     res.json(books);
   } catch (err) {
     return next(createHttpError(500, 'Error while getting books.'));

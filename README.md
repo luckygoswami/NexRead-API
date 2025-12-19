@@ -112,7 +112,8 @@ All endpoints are prefixed with `/api`.
   - **Auth**: Required (Bearer Token).
   - **Body**: `multipart/form-data` with fields for `title`, `description`, `genre`, `coverImage` (file), and `file` (PDF file).
 - `GET /`: Lists all books.
-  - **Auth**: Not required.
+  - **Auth**: Optional (Bearer Token). If provided, returns only books uploaded by the authenticated user. Without auth, returns all books.
+  - **Query Parameters**: `title` (optional) - filters books by title using case-insensitive regex.
 - `GET /:bookId`: Gets a single book by its ID.
   - **Auth**: Not required.
 - `PATCH /:bookId`: Updates a book's details.
