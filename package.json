@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc && tsc-alias",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "docker:PUblish": "docker build --no-cache -t luckygoswami/nexread-api:v2 --platform linux/amd64 . && docker push luckygoswami/nexread-api:v2"
   },
   "keywords": [],
   "author": "",
