@@ -38,4 +38,4 @@ USER node
 
 EXPOSE 5513
 
-CMD [ "pm2-runtime", "start", "ecosystem.config.js" ]
+CMD ["pnpm", "exec", "pm2-runtime", "ecosystem.config.js"]

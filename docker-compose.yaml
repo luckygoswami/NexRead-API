@@ -1,16 +1,17 @@
 services:
-    image: mongo
-    container_name: mongodb-server
-    environment:
-        - MONGO_INITDB_ROOT_USERNAME=root
-        - MONGO_INITDB_ROOT_PASSWORD=root
-    volumes:
-        - ~/mongo/data:/data/db
-    networks:
-        - nexread-network
+    mongoserver:
+        image: mongo
+        container_name: mongodb-server
+        environment:
+            - MONGO_INITDB_ROOT_USERNAME=root
+            - MONGO_INITDB_ROOT_PASSWORD=root
+        volumes:
+            - ~/mongo/data:/data/db
+        networks:
+            - nexread-network
 
     backendapi:
-        image: luckygoswami/nexread-api:v1
+        image: luckygoswami/nexread-api:v2
         container_name: nexread-backend-server
         ports: 
             - '5513:5513'
