@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send({ message: 'Hello Express world!' });
+  res.send({ message: 'Hellow, NexRead users!' });
 });
 
 app.use('/api/users/', userRouter);
